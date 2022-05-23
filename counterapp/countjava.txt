@@ -1,0 +1,96 @@
+package edu.ewubd.counterapp;
+
+import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+import android.os.Handler;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class MainActivity extends AppCompatActivity {
+
+    private int mInterval =1000;
+    private Handler mHandler;
+    private Button Start, Reset, Pause, Exit;
+    private TextView time;
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        mHandler = new Handler();
+
+        Start = findViewById(R.id.button1);
+        Reset = findViewById(R.id.button2);
+        Pause = findViewById(R.id.button3);
+        Exit = findViewById(R.id.button4);
+        time = findViewById(R.id.mainScreen);
+
+        Start.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startRepeatingTask();
+            }
+        });
+
+        Reset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                stopRepeatingTask();
+                time.setText("2018360063");
+            }
+        });
+
+        Pause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                stopRepeatingTask();
+            }
+        });
+        Exit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+                System.exit(0);
+            }
+        });
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        stopRepeatingTask();
+    }
+
+    Runnable mStatusChecker = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                update();
+            } finally {
+                mHandler.postDelayed(mStatusChecker, mInterval);
+            }
+        }
+    };
+
+    void update() {
+
+        int stdid=2018360063;
+        if(stdid>0)
+            {
+                stdid = stdid-1;
+            }
+            time.setText(String.valueOf(stdid));
+    }
+    void startRepeatingTask() {
+        mStatusChecker.run();
+    }
+
+    void stopRepeatingTask() {
+        mHandler.removeCallbacks(mStatusChecker);
+    }
+}
+
